@@ -105,3 +105,60 @@ def test_clean_room_zero_secrets_and_ascii_docs():
     for doc_name in ("README.md",):
         doc_text = (REPO_ROOT / doc_name).read_text(encoding="utf-8")
         assert all(ord(ch) <= 127 for ch in doc_text), f"{doc_name} must be pure ASCII"
+
+
+def _all_keys(obj):
+    if isinstance(obj, dict):
+        for k, v in obj.items():
+            yield k
+            yield from _all_keys(v)
+    elif isinstance(obj, list):
+        for v in obj:
+            yield from _all_keys(v)
+
+
+def test_factual_nfl_postgame_object_and_governance_cleanup():
+    data = validate_master_dataset(MASTER_DATASET_PATH)
+    gi = data["governance_invariants"]
+    for internal_key in ("vercel_dns_locked", "neon_sleep_window_ct", "operator_sim_hold_untouched"):
+        assert internal_key not in gi
+
+    fact = data["factual_nfl_postgame"]
+    standings = fact["standings"]
+    assert len(standings) == 32
+    assert len({t["team"] for t in standings}) == 32
+    assert all(not t["team"].endswith(("*", "+")) for t in standings)
+    assert {t["conference"] for t in standings} == {"AFC", "NFC"}
+    assert len({t["division"] for t in standings}) == 8
+    assert all(t["pd"] == t["pf"] - t["pa"] for t in standings)
+    bills = next(t for t in standings if t["team"] == "Buffalo Bills")
+    assert (bills["wins"], bills["losses"], bills["ties"], bills["pf"], bills["pa"], bills["pd"]) == (9, 1, 0, 313, 208, 105)
+
+    banned = {"srs", "osrs", "dsrs", "sos", "mov"}
+    assert not ({k.lower() for k in _all_keys(fact)} & banned)
+
+    wk11 = fact["week11_scores"]
+    assert len(wk11) == 13
+    assert sum(g["status"] == "FINAL" for g in wk11) == 12
+    mnf = [g for g in wk11 if g["status"] == "MNF_TONIGHT"]
+    assert len(mnf) == 1 and mnf[0]["visitor_pts"] is None and mnf[0]["home_pts"] is None
+    assert (mnf[0]["visitor"], mnf[0]["home"]) == ("Cincinnati Bengals", "Washington Commanders")
+
+    wk12 = fact["week12_holiday_slate"]
+    assert [(g["visitor"], g["home"], g["date"], g["time_et"]) for g in wk12] == [
+        ("Green Bay Packers", "Los Angeles Rams", "2026-11-25", "8:15PM"),
+        ("Chicago Bears", "Detroit Lions", "2026-11-26", "12:30PM"),
+        ("Philadelphia Eagles", "Dallas Cowboys", "2026-11-26", "4:30PM"),
+        ("Kansas City Chiefs", "Buffalo Bills", "2026-11-26", "8:20PM"),
+        ("Denver Broncos", "Pittsburgh Steelers", "2026-11-27", "3:00PM"),
+    ]
+
+
+def test_repo_hygiene_workflow_permissions_and_sql_header():
+    wf = (REPO_ROOT / ".github" / "workflows" / "postgame-nfl-sync.yml").read_text(encoding="utf-8")
+    assert re.search(r"^permissions:\s*\n\s+contents: read", wf, re.M)
+    sql = (REPO_ROOT / "sql" / "001_gse_nfl_postgame_neon_schema.sql").read_text(encoding="utf-8")
+    assert "summer-brook" not in sql
+    assert "Zero GitHub Actions" not in sql
+    readme = (REPO_ROOT / "README.md").read_text(encoding="utf-8")
+    assert "Sources and Attribution" in readme

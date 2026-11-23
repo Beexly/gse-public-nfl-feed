@@ -1,6 +1,6 @@
 -- Galaxy Sports Edge (GSE) - Bitemporal Post-Game NFL Analytics Schema
--- Target: Neon Serverless Postgres (summer-brook-99380762) over HTTPS :443
--- Zero Render build minutes | Zero GitHub Actions minutes | Compatible with Vercel ISR
+-- Target: Neon Serverless Postgres over HTTPS :443
+-- Compatible with Vercel ISR
 
 CREATE SCHEMA IF NOT EXISTS gse_nfl_stats;
 

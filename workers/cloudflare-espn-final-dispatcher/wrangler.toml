@@ -1,0 +1,15 @@
+name = "gse-espn-final-dispatcher"
+main = "worker.mjs"
+compatibility_date = "2026-11-01"
+
+# Poll every 5 minutes, skipping UTC hours 08-12 (covers the 08:30-12:30 UTC quiet window).
+[triggers]
+crons = ["*/5 0-7,13-23 * * *"]
+
+# Create the namespace first (`wrangler kv namespace create NFL_STATE`) and paste its id here.
+[[kv_namespaces]]
+binding = "NFL_STATE"
+id = "REPLACE_WITH_KV_NAMESPACE_ID"
+
+# The GitHub token is NOT stored here. Set it with:
+#   wrangler secret put GITHUB_DISPATCH_TOKEN
