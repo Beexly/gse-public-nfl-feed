@@ -1,0 +1,33 @@
+name: Postgame NFL Feed Validation and Sync
+
+on:
+  workflow_dispatch:
+  repository_dispatch:
+    types: [nfl-game-final]
+  schedule:
+    # Window-scoped post-game runs strictly outside 02:30-06:30 CST (08:30-12:30 UTC)
+    - cron: "35 21 * * 0"
+    - cron: "55 0 * * 1"
+    - cron: "50 4 * * 1,2,5"
+    - cron: "15 14 * * *"
+
+jobs:
+  validate-and-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install pytest
+        run: pip install pytest
+
+      - name: Run post-game feed test suite
+        run: python -m pytest -v
+
+      - name: Validate dataset and run configured sync
+        run: python workers/sync_nfl_postgame_to_neon_r2.py --validate-if-unconfigured
