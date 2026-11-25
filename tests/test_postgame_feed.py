@@ -42,7 +42,7 @@ def test_master_dataset_counts_and_week11_standings():
 
     assert data["summary_counts"]["total_tables"] == 60
     assert data["summary_counts"]["total_rows"] == 3705
-    assert data["active_nfl_week"] == 11
+    assert data["active_nfl_week"] == 12
 
     tables = data["tables"]
     afc_rows = {row[0]: row for row in tables["pfr_2026_afc_standings_post_wk11_sun"]["rows"]}
@@ -57,11 +57,13 @@ def test_master_dataset_counts_and_week11_standings():
     assert len(wk11_rows) == 13
     final_games = [r for r in wk11_rows if r[4] == "FINAL"]
     mnf_games = [r for r in wk11_rows if r[4] == "MNF_TONIGHT"]
-    assert len(final_games) == 12
-    assert len(mnf_games) == 1
-    assert mnf_games[0][5] == "Cincinnati Bengals"
-    assert mnf_games[0][7] == "Washington Commanders"
-    assert mnf_games[0][9] == "CIN (7-2) @ WAS (3-5-1)"
+    assert len(final_games) == 13
+    assert len(mnf_games) == 0
+    assert final_games[-1][5] == "Cincinnati Bengals"
+    assert final_games[-1][6] == "20"
+    assert final_games[-1][7] == "Washington Commanders"
+    assert final_games[-1][8] == "22"
+    assert final_games[-1][9] == "Washington Commanders +2"
 
 
 def test_worker_validate_if_unconfigured_exits_zero(monkeypatch):
@@ -139,10 +141,15 @@ def test_factual_nfl_postgame_object_and_governance_cleanup():
 
     wk11 = fact["week11_scores"]
     assert len(wk11) == 13
-    assert sum(g["status"] == "FINAL" for g in wk11) == 12
-    mnf = [g for g in wk11 if g["status"] == "MNF_TONIGHT"]
-    assert len(mnf) == 1 and mnf[0]["visitor_pts"] is None and mnf[0]["home_pts"] is None
+    assert sum(g["status"] == "FINAL" for g in wk11) == 13
+    mnf = [g for g in wk11 if g["day"] == "Mon"]
+    assert len(mnf) == 1 and mnf[0]["visitor_pts"] == 20 and mnf[0]["home_pts"] == 22
     assert (mnf[0]["visitor"], mnf[0]["home"]) == ("Cincinnati Bengals", "Washington Commanders")
+
+    cin = next(t for t in standings if t["team"] == "Cincinnati Bengals")
+    was = next(t for t in standings if t["team"] == "Washington Commanders")
+    assert (cin["wins"], cin["losses"], cin["ties"], cin["pf"], cin["pa"], cin["pd"]) == (7, 3, 0, 298, 215, 83)
+    assert (was["wins"], was["losses"], was["ties"], was["pf"], was["pa"], was["pd"]) == (4, 5, 1, 218, 243, -25)
 
     wk12 = fact["week12_holiday_slate"]
     assert [(g["visitor"], g["home"], g["date"], g["time_et"]) for g in wk12] == [

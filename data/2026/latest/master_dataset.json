@@ -1,11 +1,11 @@
 {
-  "schema_version": "2026.11.23-post-wk11-sunday-v2",
-  "generated_at_utc": "2026-11-23T16:30:00Z",
+  "schema_version": "2026.11.24-post-wk11-mnf-v3",
+  "generated_at_utc": "2026-11-25T05:10:35Z",
   "entity": "Galaxy Sports Network LLC (DBA Galaxy Sports Edge)",
   "domain": "https://galaxysportsedge.com",
   "nfl_season": 2026,
-  "active_nfl_week": 11,
-  "upcoming_slate_note": "Week 11 MNF Tonight (CIN @ WAS, Nov 23 8:15 PM ET) -> Week 12 Holiday Slate Begins Wed Nov 25 (GB @ LAR) & Thanksgiving Thu Nov 26 (CHI @ DET, PHI @ DAL, KC @ BUF)",
+  "active_nfl_week": 12,
+  "upcoming_slate_note": "Week 11 Complete (MNF Final: WAS 22, CIN 20) -> Week 12 Holiday Slate Begins Wed Nov 25 (GB @ LAR) & Thanksgiving Thu Nov 26 (CHI @ DET, PHI @ DAL, KC @ BUF)",
   "governance_invariants": {
     "zero_bookmaker_anchoring": true,
     "conviction_format": "integer XX/100 only (no % confidence badges)",
@@ -577,9 +577,9 @@
       ]
     },
     "pfr_2026_week11_scores_and_mnf": {
-      "title": "2026 NFL Week 11 Completed Final Scores & MNF Tonight",
+      "title": "2026 NFL Week 11 Completed Final Scores (All 13 Games Final)",
       "source_url": "https://www.pro-football-reference.com/years/2026/index.htm",
-      "as_of": "2026-11-23T09:01:00-05:00",
+      "as_of": "2026-11-24T00:15:00-05:00",
       "row_count": 13,
       "columns": [
         "Week",
@@ -743,12 +743,12 @@
           "Mon",
           "2026-11-23",
           "8:15PM",
-          "MNF_TONIGHT",
+          "FINAL",
           "Cincinnati Bengals",
-          "",
+          "20",
           "Washington Commanders",
-          "",
-          "CIN (7-2) @ WAS (3-5-1)"
+          "22",
+          "Washington Commanders +2"
         ]
       ]
     },
@@ -78432,12 +78432,12 @@
         "conference": "AFC",
         "division": "AFC North",
         "wins": 7,
-        "losses": 2,
+        "losses": 3,
         "ties": 0,
-        "win_pct": 0.778,
-        "pf": 278,
-        "pa": 193,
-        "pd": 85
+        "win_pct": 0.7,
+        "pf": 298,
+        "pa": 215,
+        "pd": 83
       },
       {
         "team": "Cleveland Browns",
@@ -78599,13 +78599,13 @@
         "team": "Washington Commanders",
         "conference": "NFC",
         "division": "NFC East",
-        "wins": 3,
+        "wins": 4,
         "losses": 5,
         "ties": 1,
-        "win_pct": 0.389,
-        "pf": 196,
-        "pa": 223,
-        "pd": -27
+        "win_pct": 0.45,
+        "pf": 218,
+        "pa": 243,
+        "pd": -25
       },
       {
         "team": "Philadelphia Eagles",
@@ -78902,11 +78902,11 @@
         "day": "Mon",
         "date": "2026-11-23",
         "time_et": "8:15PM",
-        "status": "MNF_TONIGHT",
+        "status": "FINAL",
         "visitor": "Cincinnati Bengals",
-        "visitor_pts": null,
+        "visitor_pts": 20,
         "home": "Washington Commanders",
-        "home_pts": null
+        "home_pts": 22
       }
     ],
     "week12_holiday_slate": [
