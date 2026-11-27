@@ -1,11 +1,11 @@
 {
-  "schema_version": "2026.11.24-post-wk11-mnf-v3",
-  "generated_at_utc": "2026-11-25T05:10:35Z",
+  "schema_version": "2026.11.27-post-wk12-thanksgiving-v1",
+  "generated_at_utc": "2026-11-27T16:15:05Z",
   "entity": "Galaxy Sports Network LLC (DBA Galaxy Sports Edge)",
   "domain": "https://galaxysportsedge.com",
   "nfl_season": 2026,
   "active_nfl_week": 12,
-  "upcoming_slate_note": "Week 11 Complete (MNF Final: WAS 22, CIN 20) -> Week 12 Holiday Slate Begins Wed Nov 25 (GB @ LAR) & Thanksgiving Thu Nov 26 (CHI @ DET, PHI @ DAL, KC @ BUF)",
+  "upcoming_slate_note": "Week 12 Thanksgiving Finals Complete (LAR 26-13, CHI 39-35, PHI 39-38, BUF 13-10) -> Black Friday: DEN @ PIT Today 3:00 PM ET",
   "governance_invariants": {
     "zero_bookmaker_anchoring": true,
     "conviction_format": "integer XX/100 only (no % confidence badges)",
@@ -78376,20 +78376,20 @@
   },
   "factual_nfl_postgame": {
     "season": 2026,
-    "as_of_week": 11,
+    "as_of_week": 12,
     "note": "Factual standings and schedule transcribed from public pages (see README Sources and attribution).",
     "standings": [
       {
         "team": "Buffalo Bills",
         "conference": "AFC",
         "division": "AFC East",
-        "wins": 9,
+        "wins": 10,
         "losses": 1,
         "ties": 0,
-        "win_pct": 0.9,
-        "pf": 313,
-        "pa": 208,
-        "pd": 105
+        "win_pct": 0.909,
+        "pf": 326,
+        "pa": 218,
+        "pd": 108
       },
       {
         "team": "New England Patriots",
@@ -78540,12 +78540,12 @@
         "conference": "AFC",
         "division": "AFC West",
         "wins": 8,
-        "losses": 2,
+        "losses": 3,
         "ties": 0,
-        "win_pct": 0.8,
-        "pf": 271,
-        "pa": 163,
-        "pd": 108
+        "win_pct": 0.727,
+        "pf": 281,
+        "pa": 176,
+        "pd": 105
       },
       {
         "team": "Las Vegas Raiders",
@@ -78588,12 +78588,12 @@
         "conference": "NFC",
         "division": "NFC East",
         "wins": 5,
-        "losses": 6,
+        "losses": 7,
         "ties": 0,
-        "win_pct": 0.455,
-        "pf": 337,
-        "pa": 312,
-        "pd": 25
+        "win_pct": 0.417,
+        "pf": 375,
+        "pa": 351,
+        "pd": 24
       },
       {
         "team": "Washington Commanders",
@@ -78611,37 +78611,37 @@
         "team": "Philadelphia Eagles",
         "conference": "NFC",
         "division": "NFC East",
-        "wins": 3,
+        "wins": 4,
         "losses": 7,
         "ties": 0,
-        "win_pct": 0.3,
-        "pf": 167,
-        "pa": 237,
-        "pd": -70
+        "win_pct": 0.364,
+        "pf": 206,
+        "pa": 275,
+        "pd": -69
       },
       {
         "team": "Detroit Lions",
         "conference": "NFC",
         "division": "NFC North",
         "wins": 8,
-        "losses": 2,
+        "losses": 3,
         "ties": 0,
-        "win_pct": 0.8,
-        "pf": 288,
-        "pa": 220,
-        "pd": 68
+        "win_pct": 0.727,
+        "pf": 323,
+        "pa": 259,
+        "pd": 64
       },
       {
         "team": "Chicago Bears",
         "conference": "NFC",
         "division": "NFC North",
-        "wins": 8,
+        "wins": 9,
         "losses": 2,
         "ties": 0,
-        "win_pct": 0.8,
-        "pf": 262,
-        "pa": 197,
-        "pd": 65
+        "win_pct": 0.818,
+        "pf": 301,
+        "pa": 232,
+        "pd": 69
       },
       {
         "team": "Minnesota Vikings",
@@ -78660,12 +78660,12 @@
         "conference": "NFC",
         "division": "NFC North",
         "wins": 6,
-        "losses": 4,
+        "losses": 5,
         "ties": 0,
-        "win_pct": 0.6,
-        "pf": 226,
-        "pa": 221,
-        "pd": 5
+        "win_pct": 0.545,
+        "pf": 239,
+        "pa": 247,
+        "pd": -8
       },
       {
         "team": "Carolina Panthers",
@@ -78743,13 +78743,13 @@
         "team": "Los Angeles Rams",
         "conference": "NFC",
         "division": "NFC West",
-        "wins": 6,
+        "wins": 7,
         "losses": 4,
         "ties": 0,
-        "win_pct": 0.6,
-        "pf": 248,
-        "pa": 187,
-        "pd": 61
+        "win_pct": 0.636,
+        "pf": 274,
+        "pa": 200,
+        "pd": 74
       },
       {
         "team": "Arizona Cardinals",
@@ -78915,44 +78915,44 @@
         "day": "Wed",
         "date": "2026-11-25",
         "time_et": "8:15PM",
-        "status": "SCHEDULED",
+        "status": "FINAL",
         "visitor": "Green Bay Packers",
-        "visitor_pts": null,
+        "visitor_pts": 13,
         "home": "Los Angeles Rams",
-        "home_pts": null
+        "home_pts": 26
       },
       {
         "week": 12,
         "day": "Thu",
         "date": "2026-11-26",
         "time_et": "12:30PM",
-        "status": "SCHEDULED",
+        "status": "FINAL",
         "visitor": "Chicago Bears",
-        "visitor_pts": null,
+        "visitor_pts": 39,
         "home": "Detroit Lions",
-        "home_pts": null
+        "home_pts": 35
       },
       {
         "week": 12,
         "day": "Thu",
         "date": "2026-11-26",
         "time_et": "4:30PM",
-        "status": "SCHEDULED",
+        "status": "FINAL",
         "visitor": "Philadelphia Eagles",
-        "visitor_pts": null,
+        "visitor_pts": 39,
         "home": "Dallas Cowboys",
-        "home_pts": null
+        "home_pts": 38
       },
       {
         "week": 12,
         "day": "Thu",
         "date": "2026-11-26",
         "time_et": "8:20PM",
-        "status": "SCHEDULED",
+        "status": "FINAL",
         "visitor": "Kansas City Chiefs",
-        "visitor_pts": null,
+        "visitor_pts": 10,
         "home": "Buffalo Bills",
-        "home_pts": null
+        "home_pts": 13
       },
       {
         "week": 12,
@@ -78965,6 +78965,7 @@
         "home": "Pittsburgh Steelers",
         "home_pts": null
       }
-    ]
+    ],
+    "as_of": "2026-11-27T16:15:05Z"
   }
 }

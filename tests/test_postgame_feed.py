@@ -134,7 +134,7 @@ def test_factual_nfl_postgame_object_and_governance_cleanup():
     assert len({t["division"] for t in standings}) == 8
     assert all(t["pd"] == t["pf"] - t["pa"] for t in standings)
     bills = next(t for t in standings if t["team"] == "Buffalo Bills")
-    assert (bills["wins"], bills["losses"], bills["ties"], bills["pf"], bills["pa"], bills["pd"]) == (9, 1, 0, 313, 208, 105)
+    assert (bills["wins"], bills["losses"], bills["ties"], bills["pf"], bills["pa"], bills["pd"]) == (10, 1, 0, 326, 218, 108)
 
     banned = {"srs", "osrs", "dsrs", "sos", "mov"}
     assert not ({k.lower() for k in _all_keys(fact)} & banned)
