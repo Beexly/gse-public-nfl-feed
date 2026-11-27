@@ -24,6 +24,28 @@ To avoid unnecessary database compute wakes during overnight hours, `in_neon_sle
 
 Both the Python worker (`workers/sync_nfl_postgame_to_neon_r2.py`) and the GitHub Actions cron schedule (`.github/workflows/postgame-nfl-sync.yml`) are scoped strictly outside `02:30-06:30` Central Time (`08:30-12:30 UTC` during CST).
 
+## Sync Targets and Exit Codes
+
+Each target is configured and reported independently, so one failing does not silently take the
+others down. `ISR` runs first but its failure never blocks the database write; a cache that stays
+stale for one cycle is recoverable, a missing data load is not.
+
+| Target | Env vars | Effect |
+|---|---|---|
+| Vercel ISR | `VERCEL_REVALIDATE_URL`, `VERCEL_REVALIDATE_SECRET` | POST tag revalidation |
+| Neon | `NEON_DATABASE_URL` or `DATABASE_URL` | schema apply + upsert in one transaction |
+| Cloudflare R2 | `R2_ENDPOINT_URL`, `R2_BUCKET`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY` | SigV4 PUT of the dataset to `nfl/<season>/wk<NN>/latest/master_dataset.json` |
+
+Exit codes: `0` all configured targets succeeded (or nothing configured with
+`--validate-if-unconfigured`), `1` at least one target failed, `2` inside the sleep window with the
+flag absent, `3` no sync secrets configured with the flag absent. Log lines are prefixed per target
+(`ISR_`, `NEON_`, `R2_`) and a `TARGETS:` line states what was configured before anything runs.
+
+Note: `window_tag` is currently always `WK<week>_POST_SUN`. Multiple in-week windows (TNF, SNF,
+MNF) collapse onto that tag and the `ON CONFLICT` key is `(table_key, season, nfl_week, window_tag)`,
+so only the last write for a week survives. Pass a real window tag before relying on intra-week
+bitemporality.
+
 ## Local Validation
 
 ```bash

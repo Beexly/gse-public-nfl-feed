@@ -43,3 +43,9 @@ SELECT DISTINCT ON (table_key)
     row_count
 FROM gse_nfl_stats.stat_tables_bitemporal
 ORDER BY table_key, ingested_at_utc DESC;
+
+-- The latest-per-table view sorts on (table_key, ingested_at_utc DESC). Without this index
+-- every read of the view and every ingest's tail count() degrades to a seq scan + sort as the
+-- bitemporal table grows one row per table per window per season.
+CREATE INDEX IF NOT EXISTS idx_stat_tables_latest
+    ON gse_nfl_stats.stat_tables_bitemporal (table_key, ingested_at_utc DESC);

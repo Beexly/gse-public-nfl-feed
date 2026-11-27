@@ -97,11 +97,17 @@ def test_clean_room_zero_secrets_and_ascii_docs():
         "cae" + "sars",
     ]
     forbidden = re.compile("(" + "|".join(patterns) + ")", re.IGNORECASE)
-    skip_dirs = {".git", "__pycache__", ".pytest_cache"}
+    skip_dirs = {".git", "__pycache__", ".pytest_cache", ".venv", "node_modules", "dist", "build"}
+    binary_suffixes = (".png", ".jpg", ".jpeg", ".gif", ".webp", ".ico", ".pdf", ".zip", ".gz", ".woff", ".woff2", ".ttf")
     for path in REPO_ROOT.rglob("*"):
         if not path.is_file() or any(part in skip_dirs for part in path.parts):
             continue
-        content = path.read_text(encoding="utf-8")
+        if path.suffix.lower() in binary_suffixes:
+            continue
+        try:
+            content = path.read_text(encoding="utf-8")
+        except (UnicodeDecodeError, OSError):
+            continue  # venv interpreter, packaged binaries, etc.
         assert not forbidden.search(content), f"Forbidden token found in {path}"
 
     for doc_name in ("README.md",):
@@ -169,3 +175,137 @@ def test_repo_hygiene_workflow_permissions_and_sql_header():
     assert "Zero GitHub Actions" not in sql
     readme = (REPO_ROOT / "README.md").read_text(encoding="utf-8")
     assert "Sources and Attribution" in readme
+
+
+# --- hardening coverage -----------------------------------------------------
+
+import hashlib
+import io
+
+DSN = "postgres" + "ql://u:p@h/db"
+
+
+class _FrozenDatetime(datetime.datetime):
+    @classmethod
+    def now(cls, tz=None):
+        return cls(2026, 11, 27, 18, 0, 0, tzinfo=tz or datetime.timezone.utc)
+
+
+def test_r2_sigv4_authorization_shape(monkeypatch):
+    from workers import sync_nfl_postgame_to_neon_r2 as w
+
+    monkeypatch.setattr(w.datetime, "datetime", _FrozenDatetime)
+    captured = {}
+
+    class _Resp(io.BytesIO):
+        status = 200
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *a):
+            return False
+
+    def fake_urlopen(req, timeout=None):
+        captured["req"] = req
+        captured["timeout"] = timeout
+        return _Resp(b"")
+
+    monkeypatch.setattr(w.urllib.request, "urlopen", fake_urlopen)
+    status = w._signed_r2_put(
+        "https://acct.r2.cloudflarestorage.com", "bkt", "nfl/2026/wk12/latest/master_dataset.json",
+        b"{}", "AKIDEXAMPLE", "SECRET",
+    )
+    assert status == 200
+    auth = captured["req"].get_header("Authorization")
+    assert auth.startswith("AWS4-HMAC-SHA256 Credential=AKIDEXAMPLE/20261127/auto/s3/aws4_request")
+    assert "SignedHeaders=host;x-amz-content-sha256;x-amz-date" in auth
+    assert auth.rsplit("Signature=", 1)[1] and len(auth.rsplit("Signature=", 1)[1]) == 64
+    assert captured["req"].get_header("X-amz-content-sha256") == hashlib.sha256(b"{}").hexdigest()
+    assert "nfl/2026/wk12/latest/master_dataset.json" in captured["req"].full_url
+
+
+def test_sigv4_signature_changes_with_body(monkeypatch):
+    from workers import sync_nfl_postgame_to_neon_r2 as w
+
+    monkeypatch.setattr(w.datetime, "datetime", _FrozenDatetime)
+    sigs = []
+
+    class _Resp(io.BytesIO):
+        status = 200
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *a):
+            return False
+
+    def fake_urlopen(req, timeout=None):
+        sigs.append(req.get_header("Authorization").rsplit("Signature=", 1)[1])
+        return _Resp(b"")
+
+    monkeypatch.setattr(w.urllib.request, "urlopen", fake_urlopen)
+    for body in (b"{}", b"[]"):
+        w._signed_r2_put("https://h.example", "b", "k", body, "AK", "SK")
+    assert len(set(sigs)) == 2 and all(len(s) == 64 for s in sigs)
+
+
+def test_sync_targets_reported_individually(monkeypatch):
+    from workers import sync_nfl_postgame_to_neon_r2 as w
+
+    for var in ("VERCEL_REVALIDATE_URL", "VERCEL_REVALIDATE_SECRET", "NEON_DATABASE_URL",
+                "DATABASE_URL", "R2_ENDPOINT_URL", "R2_BUCKET", "R2_ACCESS_KEY_ID",
+                "R2_SECRET_ACCESS_KEY"):
+        monkeypatch.delenv(var, raising=False)
+    assert w.sync_targets() == {"isr": False, "neon": False, "r2": False}
+    assert w.has_sync_secrets() is False
+
+    monkeypatch.setenv("R2_ENDPOINT_URL", "https://x")
+    assert w.sync_targets()["r2"] is False          # partial config is not ready
+    monkeypatch.setenv("R2_BUCKET", "b")
+    monkeypatch.setenv("R2_ACCESS_KEY_ID", "a")
+    monkeypatch.setenv("R2_SECRET_ACCESS_KEY", "s")
+    assert w.sync_targets() == {"isr": False, "neon": False, "r2": True}
+    assert w.has_sync_secrets() is True
+
+
+def test_isr_failure_does_not_block_neon(monkeypatch):
+    from workers import sync_nfl_postgame_to_neon_r2 as w
+
+    monkeypatch.setenv("VERCEL_REVALIDATE_URL", "https://revalidate.test")
+    monkeypatch.setenv("VERCEL_REVALIDATE_SECRET", "s")
+    monkeypatch.setenv("NEON_DATABASE_URL", DSN)
+    calls = {"neon": 0}
+
+    monkeypatch.setattr(w, "trigger_vercel_isr", lambda *a, **k: {"ok": False, "status": 500})
+    monkeypatch.setattr(w, "sync_to_neon", lambda *a, **k: (calls.__setitem__("neon", 1) or (60, 3705)))
+    monkeypatch.setattr(w, "in_neon_sleep_window", lambda *a, **k: False)
+
+    assert w.main(["--validate-if-unconfigured"]) == 1   # isr reported as failed
+    assert calls["neon"] == 1                            # but the DB write still ran
+
+
+def test_safe_detail_scrubs_dsn():
+    from workers import sync_nfl_postgame_to_neon_r2 as w
+
+    exc = RuntimeError("could not connect to " + "postgres" + "ql://user:pass@ep-x.neon.tech/db?sslmode=require")
+    detail = w._safe_detail(exc)
+    assert "<dsn>" in detail and "pass@" not in detail
+
+
+def test_dataset_season_week_validation(monkeypatch):
+    from workers import sync_nfl_postgame_to_neon_r2 as w
+
+    class _Conn:
+        def close(self):
+            pass
+
+    monkeypatch.setattr(w, "_connect", lambda url: _Conn())
+    monkeypatch.setattr(w, "_sign", lambda *a: None, raising=False)
+    bad = {"nfl_season": "twenty", "active_nfl_week": 11, "tables": {}}
+    try:
+        w.sync_to_neon(DSN, bad)
+    except ValueError as exc:
+        assert "integers" in str(exc)
+    else:
+        raise AssertionError("expected ValueError for non-integer season")
