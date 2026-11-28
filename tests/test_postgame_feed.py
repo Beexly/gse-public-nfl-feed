@@ -166,6 +166,14 @@ def test_factual_nfl_postgame_object_and_governance_cleanup():
         ("Denver Broncos", "Pittsburgh Steelers", "2026-11-27", "3:00PM"),
     ]
 
+    # Holiday-slate freshness: every listed game is complete, so none may
+    # still read SCHEDULED and none may carry a null score.
+    assert all(g["status"] == "FINAL" for g in wk12)
+    assert all(g["visitor_pts"] is not None and g["home_pts"] is not None for g in wk12)
+    den_pit = wk12[-1]
+    assert (den_pit["visitor_pts"], den_pit["home_pts"]) == (5, 27)
+    assert "Today" not in data["upcoming_slate_note"]
+
 
 def test_repo_hygiene_workflow_permissions_and_sql_header():
     wf = (REPO_ROOT / ".github" / "workflows" / "postgame-nfl-sync.yml").read_text(encoding="utf-8")

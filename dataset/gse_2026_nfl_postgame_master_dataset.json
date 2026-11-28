@@ -1,11 +1,11 @@
 {
   "schema_version": "2026.11.27-post-wk12-thanksgiving-v1",
-  "generated_at_utc": "2026-11-27T16:15:05Z",
+  "generated_at_utc": "2026-11-28T01:20:00Z",
   "entity": "Galaxy Sports Network LLC (DBA Galaxy Sports Edge)",
   "domain": "https://galaxysportsedge.com",
   "nfl_season": 2026,
   "active_nfl_week": 12,
-  "upcoming_slate_note": "Week 12 Thanksgiving Finals Complete (LAR 26-13, CHI 39-35, PHI 39-38, BUF 13-10) -> Black Friday: DEN @ PIT Today 3:00 PM ET",
+  "upcoming_slate_note": "Week 12 Thanksgiving and Black Friday Finals Complete (LAR 26-13, CHI 39-35, PHI 39-38, BUF 13-10, PIT 27-5) -> Week 12 Sunday Nov 29 (10 games) and MNF CAR @ TB Nov 30",
   "governance_invariants": {
     "zero_bookmaker_anchoring": true,
     "conviction_format": "integer XX/100 only (no % confidence badges)",
@@ -78959,13 +78959,13 @@
         "day": "Fri",
         "date": "2026-11-27",
         "time_et": "3:00PM",
-        "status": "SCHEDULED",
+        "status": "FINAL",
         "visitor": "Denver Broncos",
-        "visitor_pts": null,
+        "visitor_pts": 5,
         "home": "Pittsburgh Steelers",
-        "home_pts": null
+        "home_pts": 27
       }
     ],
-    "as_of": "2026-11-27T16:15:05Z"
+    "as_of": "2026-11-28T01:20:00Z"
   }
 }
