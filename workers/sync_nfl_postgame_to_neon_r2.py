@@ -24,8 +24,8 @@ from zoneinfo import ZoneInfo
 
 REPO_ROOT = pathlib.Path(__file__).resolve().parent.parent
 DEFAULT_DATASET_PATH = REPO_ROOT / "data" / "2026" / "latest" / "master_dataset.json"
-EXPECTED_TOTAL_TABLES = 60
-EXPECTED_TOTAL_ROWS = 3705
+EXPECTED_TOTAL_TABLES = 3
+EXPECTED_TOTAL_ROWS = 50
 
 
 def in_neon_sleep_window(now_utc: datetime.datetime | None = None) -> bool:

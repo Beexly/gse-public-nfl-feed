@@ -38,32 +38,38 @@ def test_in_neon_sleep_window_cst_boundaries():
 def test_master_dataset_counts_and_week11_standings():
     data = validate_master_dataset(MASTER_DATASET_PATH)
     assert CANONICAL_DATASET_PATH.read_bytes() == MASTER_DATASET_PATH.read_bytes()
-    assert len(list(CSV_DIR.glob("*.csv"))) == 60
+    csv_files = sorted(p.name for p in CSV_DIR.glob("*.csv"))
+    assert csv_files == [
+        "factual_2026_nfl_standings.csv",
+        "factual_2026_week11_scores.csv",
+        "factual_2026_week12_holiday_scores.csv",
+    ]
 
-    assert data["summary_counts"]["total_tables"] == 60
-    assert data["summary_counts"]["total_rows"] == 3705
+    # Clean-room CF-17 guard: zero third-party PFR/Sharp/Savant tables or CSVs
+    forbidden_prefixes = ("pfr_", "sharp_", "savant_")
+    assert not any(name.startswith(forbidden_prefixes) for name in csv_files)
+
+    assert data["summary_counts"]["total_tables"] == 3
+    assert data["summary_counts"]["total_rows"] == 50
     assert data["active_nfl_week"] == 12
 
     tables = data["tables"]
-    afc_rows = {row[0]: row for row in tables["pfr_2026_afc_standings_post_wk11_sun"]["rows"]}
-    nfc_rows = {row[0]: row for row in tables["pfr_2026_nfc_standings_post_wk11_sun"]["rows"]}
+    assert not any(key.startswith(forbidden_prefixes) for key in tables)
+    standings_rows = tables["factual_2026_nfl_standings"]["rows"]
+    assert len(standings_rows) == 32
+    by_team = {row[2]: row for row in standings_rows}
+    assert by_team["San Francisco 49ers"][3:5] == ["9", "1"]
+    assert by_team["Detroit Lions"][3:5] == ["8", "3"]
+    assert by_team["Buffalo Bills"][3:5] == ["10", "1"]
+    assert by_team["Cincinnati Bengals"][3:5] == ["7", "3"]
 
-    assert afc_rows["Buffalo Bills*"][2:4] == ["9", "1"]
-    assert nfc_rows["San Francisco 49ers*"][2:4] == ["9", "1"]
-    assert nfc_rows["Detroit Lions*"][2:4] == ["8", "2"]
-    assert nfc_rows["Chicago Bears*"][2:4] == ["8", "2"]
-
-    wk11_rows = tables["pfr_2026_week11_scores_and_mnf"]["rows"]
+    wk11_rows = tables["factual_2026_week11_scores"]["rows"]
     assert len(wk11_rows) == 13
-    final_games = [r for r in wk11_rows if r[4] == "FINAL"]
-    mnf_games = [r for r in wk11_rows if r[4] == "MNF_TONIGHT"]
-    assert len(final_games) == 13
-    assert len(mnf_games) == 0
-    assert final_games[-1][5] == "Cincinnati Bengals"
-    assert final_games[-1][6] == "20"
-    assert final_games[-1][7] == "Washington Commanders"
-    assert final_games[-1][8] == "22"
-    assert final_games[-1][9] == "Washington Commanders +2"
+    assert all(r[1] == "FINAL" for r in wk11_rows)
+    assert wk11_rows[-1][2] == "Cincinnati Bengals"
+    assert wk11_rows[-1][3] == "20"
+    assert wk11_rows[-1][4] == "Washington Commanders"
+    assert wk11_rows[-1][5] == "22"
 
 
 def test_worker_validate_if_unconfigured_exits_zero(monkeypatch):

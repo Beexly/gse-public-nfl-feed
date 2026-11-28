@@ -1,0 +1,33 @@
+conference,division,team,wins,losses,ties,pf,pa,pd
+AFC,AFC East,Buffalo Bills,10,1,0,326,218,108
+AFC,AFC East,New England Patriots,5,5,0,221,242,-21
+AFC,AFC East,New York Jets,3,8,0,221,278,-57
+AFC,AFC East,Miami Dolphins,1,9,0,157,250,-93
+AFC,AFC North,Cincinnati Bengals,7,3,0,298,215,83
+AFC,AFC North,Cleveland Browns,6,4,0,188,220,-32
+AFC,AFC North,Pittsburgh Steelers,6,4,0,214,201,13
+AFC,AFC North,Baltimore Ravens,4,7,0,242,294,-52
+AFC,AFC South,Jacksonville Jaguars,7,3,0,287,167,120
+AFC,AFC South,Houston Texans,4,6,0,259,222,37
+AFC,AFC South,Indianapolis Colts,3,8,0,211,297,-86
+AFC,AFC South,Tennessee Titans,1,9,0,197,290,-93
+AFC,AFC West,Denver Broncos,8,2,0,236,210,26
+AFC,AFC West,Kansas City Chiefs,8,3,0,281,176,105
+AFC,AFC West,Las Vegas Raiders,4,7,0,275,327,-52
+AFC,AFC West,Los Angeles Chargers,1,9,0,168,266,-98
+NFC,NFC East,New York Giants,6,3,1,226,214,12
+NFC,NFC East,Dallas Cowboys,5,7,0,375,351,24
+NFC,NFC East,Washington Commanders,4,5,1,218,243,-25
+NFC,NFC East,Philadelphia Eagles,4,7,0,206,275,-69
+NFC,NFC North,Detroit Lions,8,3,0,323,259,64
+NFC,NFC North,Chicago Bears,9,2,0,301,232,69
+NFC,NFC North,Minnesota Vikings,7,3,0,186,161,25
+NFC,NFC North,Green Bay Packers,6,5,0,239,247,-8
+NFC,NFC South,Carolina Panthers,5,5,0,254,269,-15
+NFC,NFC South,Tampa Bay Buccaneers,3,7,0,223,209,14
+NFC,NFC South,Atlanta Falcons,3,7,0,201,258,-57
+NFC,NFC South,New Orleans Saints,3,7,0,215,257,-42
+NFC,NFC West,San Francisco 49ers,9,1,0,316,206,110
+NFC,NFC West,Seattle Seahawks,6,4,0,223,175,48
+NFC,NFC West,Los Angeles Rams,7,4,0,274,200,74
+NFC,NFC West,Arizona Cardinals,3,8,0,191,323,-132

@@ -10,8 +10,8 @@ It intentionally contains **zero** proprietary prediction models, **zero** paid 
 
 ## Repository Layout
 
-- `data/2026/csv/*.csv` - 60 post-game CSV tables covering 2025 reference metrics and 2026 season-to-date standings, Week 11 scores, team efficiency, defense, trench, coverage, and player statistics.
-- `data/2026/latest/master_dataset.json` - Consolidated 2026 post-game master JSON feed (60 tables, 3,705 rows, active NFL Week 11).
+- `data/2026/csv/*.csv` - 3 factual public-domain post-game CSV tables (`factual_2026_nfl_standings.csv`, `factual_2026_week11_scores.csv`, `factual_2026_week12_holiday_scores.csv`).
+- `data/2026/latest/master_dataset.json` - Consolidated 2026 post-game master JSON feed (3 factual tables, 50 rows, active NFL Week 12).
 - `dataset/gse_2026_nfl_postgame_master_dataset.json` - Canonical copy of the consolidated master JSON feed.
 - `sql/001_gse_nfl_postgame_neon_schema.sql` - Bitemporal PostgreSQL schema for Neon (`gse_nfl_stats`).
 - `workers/sync_nfl_postgame_to_neon_r2.py` - Dataset validator and optional Neon / Cloudflare R2 / Vercel ISR sync worker.
@@ -53,11 +53,11 @@ python -m pytest -v
 python workers/sync_nfl_postgame_to_neon_r2.py --validate-if-unconfigured
 ```
 
-In public CI or local runs without sync secrets configured, `--validate-if-unconfigured` validates `data/2026/latest/master_dataset.json` (`60` tables, `3,705` rows) and exits `0` cleanly without attempting external network sync.
+In public CI or local runs without sync secrets configured, `--validate-if-unconfigured` validates `data/2026/latest/master_dataset.json` (`3` tables, `50` rows) and exits `0` cleanly without attempting external network sync.
 
 ## Sources and Attribution
 
-The tables in this repository are factual statistics transcribed from public web pages: Pro-Football-Reference (files prefixed `pfr_`), Sharp Football (files prefixed `sharp_`), and Baseball-Savant-style phase tables (files prefixed `savant_`), as labelled in each file name. The `factual_nfl_postgame` object in the master JSON is derived only from the standings and score tables of those sources.
+The tables in this repository contain strictly factual public-domain NFL standings and final game scores derived from `factual_nfl_postgame` (32 NFL standings rows, 13 Week 11 scores, and 5 Week 12 holiday slate scores). Third-party `pfr_*`, `sharp_*`, and `savant_*` CSV files and tables were removed under clean-room MIT compliance review (CF-17).
 
 The MIT license applies to the code in this repository and to the GSE-authored structure (file layout, schema, and tooling) only. Third-party data remains subject to its owners' terms. Rights holders who want any table changed or removed can open an issue in this repository.
 
